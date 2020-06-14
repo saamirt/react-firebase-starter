@@ -4,7 +4,7 @@ import * as actions from "../../store/actions/authActions";
 import { connect } from "react-redux";
 
 import styled from "styled-components";
-// import googleLogo from "./images/btn_google_white_normal_ios.svg";
+import googleLogo from "./images/btn_google_white_normal_ios.svg";
 
 const Divider = styled.div`
 	display: flex;

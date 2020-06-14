@@ -9,6 +9,15 @@ import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import rootReducer from "./store/reducers/rootReducer";
 
+//firestore
+import { ReactReduxFirebaseProvider, getFirebase } from "react-redux-firebase";
+import {
+	createFirestoreInstance,
+	reduxFirestore,
+	getFirestore
+} from "redux-firestore";
+import firebase from "./config/firebase_config";
+
 //thunk
 import thunk from "redux-thunk";
 
@@ -17,29 +26,41 @@ const composeEnhancers =
 		? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 		: compose;
 
-// const rrfConfig = {
-// 	userProfile: "users",
-// 	attachAuthIsReady: true, // attaches auth is ready promise to store
-// };
+const rrfConfig = {
+	userProfile: "users",
+	useFirestoreForProfile: true, // Firestore for Profile instead of Realtime DB
+	attachAuthIsReady: true // attaches auth is ready promise to store
+};
 
 // thunk is middleware allows writing action creators that return a function
 // instead of an action. Useful for doing things between the action and reducer
 // like accessing a database.
-// .withExtraArgument function adds params as extra args for action
+// .withExtraArgument function adds params (firebase stuff) as extra args for action
+//
+// reduxFirestore and reactReduxFirebase connect our firebase app (configured in
+//  firebaseConfig) to our store.
 const store = createStore(
 	rootReducer,
-	composeEnhancers(applyMiddleware(thunk.withExtraArgument({ a: 'a'})))
+	composeEnhancers(
+		// reactReduxFirebase(firebase, rrfConfig), // redux binding for firebase
+		reduxFirestore(firebase), // redux bindings for firestore
+		applyMiddleware(thunk.withExtraArgument({ getFirestore, getFirebase }))
+	)
 );
 
-// const rrfProps = {
-// 	config: rrfConfig,
-// 	dispatch: store.dispatch,
-// };
+const rrfProps = {
+	firebase,
+	config: rrfConfig,
+	dispatch: store.dispatch,
+	createFirestoreInstance // <- needed if using firestore
+};
 
 // Setup react-redux so that connect HOC can be used
 render(
 	<Provider store={store}>
-		<App />
+		<ReactReduxFirebaseProvider {...rrfProps}>
+			<App />
+		</ReactReduxFirebaseProvider>
 	</Provider>,
 	document.getElementById("root")
 );

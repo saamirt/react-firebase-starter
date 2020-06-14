@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { compose } from "redux";
 import { connect } from "react-redux";
 
+import { firestoreConnect } from "react-redux-firebase";
+
 import * as actions from "../../store/actions/todoActions";
 
 //These are just for current styling - feel free to remove
@@ -42,7 +44,7 @@ const TodosPage = ({ loading, error, todos, userId, editTodo, deleteTodo }) => {
 	const [del, setDel] = useState(false);
 	const [edit, setEdit] = useState(false);
 
-	const handleKeyPress = (e) => {
+	const handleKeyPress = e => {
 		if (e.key === "Enter") e.preventDefault();
 	};
 
@@ -50,7 +52,7 @@ const TodosPage = ({ loading, error, todos, userId, editTodo, deleteTodo }) => {
 		ref = { target: event.target, id, field };
 	};
 
-	const handleDelete = (id) => {
+	const handleDelete = id => {
 		deleteTodo(id).then(() => {
 			if (!error) {
 				delSemaphore += 1;
@@ -66,14 +68,14 @@ const TodosPage = ({ loading, error, todos, userId, editTodo, deleteTodo }) => {
 	};
 
 	useEffect(() => {
-		console.log(todos);
-		const handleClickOutside = async (event) => {
+		const handleClickOutside = async event => {
 			if (ref && ref.target && !ref.target.contains(event.target)) {
-				if (ref.target.value.trim() === todos[ref.id]) return;
+				let todo = todos[userId].todos.find(x => x.id === ref.id);
+				if (ref.target.value.trim() === todo[ref.field]) return;
 				console.log(`Setting title to : ${ref.target.value}`);
 				await editTodo(ref.id, {
-					title: ref.id,
-					[ref.field]: ref.target.value.trim(),
+					...todo,
+					[ref.field]: ref.target.value.trim()
 				}).then(() => {
 					if (!error) {
 						editSemaphore += 1;
@@ -118,23 +120,29 @@ const TodosPage = ({ loading, error, todos, userId, editTodo, deleteTodo }) => {
 				</div>
 			) : null}
 			<div className="list-group">
-				{Object.keys(todos) &&
-					Object.keys(todos)
+				{todos &&
+					todos[userId] &&
+					todos[userId].todos &&
+					todos[userId].todos
 						.slice(0)
 						.reverse()
 						.map((todo, index) => (
 							<div
-								key={`project-${todo}`}
+								key={`project-${todo.id}`}
 								href="#"
 								className="list-group-item mb-4"
 							>
 								<div className="d-flex w-100 justify-content-between">
 									<StyledTitle
 										className="mb-1"
-										onChange={(e) =>
-											handleInputChange(e, todo, "title")
+										onChange={e =>
+											handleInputChange(
+												e,
+												todo.id,
+												"title"
+											)
 										}
-										defaultValue={todo}
+										defaultValue={todo.title}
 										onKeyPress={handleKeyPress}
 									/>
 									<button
@@ -142,17 +150,17 @@ const TodosPage = ({ loading, error, todos, userId, editTodo, deleteTodo }) => {
 										className="close"
 										data-dismiss="alert"
 										aria-label="Close"
-										onClick={() => handleDelete(todo)}
+										onClick={() => handleDelete(todo.id)}
 									>
 										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
 								<StyledContent
 									className="mb-1"
-									onChange={(e) =>
-										handleInputChange(e, todo, "content")
+									onChange={e =>
+										handleInputChange(e, todo.id, "content")
 									}
-									defaultValue={todos[todo]}
+									defaultValue={todo.content}
 									onKeyPress={handleKeyPress}
 								/>
 							</div>
@@ -162,16 +170,19 @@ const TodosPage = ({ loading, error, todos, userId, editTodo, deleteTodo }) => {
 	);
 };
 
-const mapStateToProps = ({ todos }) => ({
-	userId: "uid",
-	todos: todos.todos,
+const mapStateToProps = ({ firebase, firestore, todos }) => ({
+	userId: firebase.auth.uid,
+	todos: firestore.data.todos,
 	loading: todos.loading,
-	error: todos.error,
+	error: todos.error
 });
 
 const mapDispatchToProps = {
 	editTodo: actions.editTodo,
-	deleteTodo: actions.deleteTodo,
+	deleteTodo: actions.deleteTodo
 };
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(TodosPage);
+export default compose(
+	connect(mapStateToProps, mapDispatchToProps),
+	firestoreConnect(props => [`todos/${props.userId}`])
+)(TodosPage);

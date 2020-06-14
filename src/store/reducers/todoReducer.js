@@ -6,10 +6,6 @@ const initialState = {
 	deleteTodo: {
 		error: null,
 		loading: false
-	},
-	todos: {
-		"1": "Twestasdasdasd",
-		"2": "asdasdasdasd"
 	}
 };
 
@@ -19,7 +15,7 @@ export default (state = initialState, { type, payload }) => {
 			return { ...state, loading: true };
 
 		case actions.ADD_TODO_SUCCESS:
-			return { ...state, loading: false, error: false, todos: {...state.todos, [payload.title]: payload.content} };
+			return { ...state, loading: false, error: false };
 
 		case actions.ADD_TODO_FAIL:
 			return { ...state, loading: false, error: payload };
@@ -31,16 +27,13 @@ export default (state = initialState, { type, payload }) => {
 			};
 
 		case actions.DELETE_TODO_SUCCESS:
-			let newTodos = Object.assign({}, state.todos);
-			delete newTodos[payload];
 			return {
 				...state,
 				deleteTodo: {
 					...state.deleteTodo,
 					loading: false,
 					error: false
-				},
-				todos: newTodos
+				}
 			};
 
 		case actions.DELETE_TODO_FAIL:

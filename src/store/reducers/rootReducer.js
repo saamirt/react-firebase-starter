@@ -1,4 +1,6 @@
 import { combineReducers } from "redux";
+import { firebaseReducer } from "react-redux-firebase";
+import { firestoreReducer } from "redux-firestore";
 
 import authReducer from "./authReducer";
 import todoReducer from "./todoReducer";
@@ -6,12 +8,8 @@ import todoReducer from "./todoReducer";
 const rootReducer = combineReducers({
 	auth: authReducer,
 	todos: todoReducer,
-	aws: (state = { auth: true}, { type, payload }) => {
-		switch (type) {
-			default:
-				return state;
-		}
-	}	
+	firebase: firebaseReducer,
+	firestore: firestoreReducer
 });
 
 export default rootReducer;
