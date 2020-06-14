@@ -12,7 +12,7 @@ const AddTodoPage = ({ addTodo, loading, error }) => {
 	const [form, setForm] = useState({ title: "", content: "" });
 	const [success, setSuccess] = useState(false);
 
-	const handleInputChange = e => {
+	const handleInputChange = (e) => {
 		const target = e.target;
 		const value =
 			target.type === "checkbox" ? target.checked : target.value;
@@ -21,20 +21,18 @@ const AddTodoPage = ({ addTodo, loading, error }) => {
 		setForm({ ...form, [id]: value });
 	};
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 		if (!(form.title.trim() && form.content.trim())) return;
 		await addTodo(form).then(() => {
-			if (!error) {
-				semaphore += 1;
-				setSuccess(true);
-				setTimeout(() => {
-					semaphore -= 1;
-					if (semaphore < 1) {
-						setSuccess(false);
-					}
-				}, 3000);
-			}
+			semaphore += 1;
+			setSuccess(true);
+			setTimeout(() => {
+				semaphore -= 1;
+				if (semaphore < 1) {
+					setSuccess(false);
+				}
+			}, 3000);
 		});
 		setForm({ title: "", content: "" });
 	};
@@ -49,9 +47,16 @@ const AddTodoPage = ({ addTodo, loading, error }) => {
 				/>
 			</Helmet>
 			{success ? (
-				<div className="alert alert-primary" role="alert">
-					New project submitted!
-				</div>
+				error ? (
+					<div className="alert alert-danger" role="alert">
+						{error || "There was an error with adding the item."}
+					</div>
+					
+				) : (
+					<div className="alert alert-primary" role="alert">
+						New project submitted!
+					</div>
+				)
 			) : null}
 			<div className="card p-5">
 				<h1 className="text-center">Add Todo</h1>
@@ -98,18 +103,18 @@ const AddTodoPage = ({ addTodo, loading, error }) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	console.log(state);
 	const { todos } = state;
 	return {
 		loading: todos.loading,
-		error: todos.error
+		error: todos.error,
 	};
 };
 
 const mapDispatchToProps = {
 	addTodo: actions.addTodo,
-	editTodoAction: actions.editTodo
+	editTodoAction: actions.editTodo,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddTodoPage);

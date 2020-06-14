@@ -1,12 +1,12 @@
-# React Firebase Starter
+# React AWS Starter
 Currently a work in progress.
 
-Live Demo: https://basic-react-boilerplate.firebaseapp.com/
+Live Demo: NOT AVAILABLE YET
 
-![Todos](https://raw.githubusercontent.com/saamirt/react-firebase-starter/master/public/page1.png)
-![Addtodo](https://raw.githubusercontent.com/saamirt/react-firebase-starter/master/public/page2.png)
-![Signin](https://raw.githubusercontent.com/saamirt/react-firebase-starter/master/public/page3.png)
-![Signup](https://raw.githubusercontent.com/saamirt/react-firebase-starter/master/public/page4.png)
+![Todos](https://raw.githubusercontent.com/saamirt/react-aws-starter/master/public/page1.png)
+![Addtodo](https://raw.githubusercontent.com/saamirt/react-aws-starter/master/public/page2.png)
+![Signin](https://raw.githubusercontent.com/saamirt/react-aws-starter/master/public/page3.png)
+![Signup](https://raw.githubusercontent.com/saamirt/react-aws-starter/master/public/page4.png)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

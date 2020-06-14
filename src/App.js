@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { connect, useSelector } from "react-redux";
-import { isLoaded } from "react-redux-firebase";
+import { connect } from "react-redux";
 
 import Header from "./components/Header";
 import Loader from "./components/Loader";
@@ -15,7 +14,7 @@ import TodosPage from "./containers/TodosPage/TodosPage";
 import AddTodoPage from "./containers/AddTodoPage/AddTodoPage";
 
 const App = ({ loggedIn }) => {
-	const auth = useSelector(state => state.firebase.auth);
+	// const auth = useSelector(state => state.aws.auth);
 
 	let routes = loggedIn ? (
 		<Switch>
@@ -38,8 +37,8 @@ const App = ({ loggedIn }) => {
 		<BrowserRouter>
 			<HelmetProvider>
 				<Helmet
-					titleTemplate="%s - React Firebase Starer"
-					defaultTitle="React Firebase Starter"
+					titleTemplate="%s - React AWS Starer"
+					defaultTitle="React AWS Starter"
 				>
 					<meta
 						name="description"
@@ -47,7 +46,7 @@ const App = ({ loggedIn }) => {
 					/>
 				</Helmet>
 
-				{!isLoaded(auth) ? (
+				{false ? (
 					<Loader />
 				) : (
 					<>
@@ -60,10 +59,10 @@ const App = ({ loggedIn }) => {
 	);
 };
 
-const mapStateToProps = ({ firebase }) => ({
-	loggedIn: !!firebase.auth.uid
+const mapStateToProps = ({ aws }) => ({
+	loggedIn: true
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { a: 'a'};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
